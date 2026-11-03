@@ -115,6 +115,4 @@ This is a **local learning prototype**, not a secure production file-sharing pla
 
 The purpose is to demonstrate computer networking fundamentals, client–server architecture, threading, file I/O, integrity checking, and desktop application development.
 
-## Academic context
 
-This project originated as collaborative academic work. When presenting it as part of a personal portfolio, credit fellow contributors and describe individual responsibilities accurately. The current repository is a curated copy of the original source code, **not a claim of exclusive authorship**.
