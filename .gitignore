@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Local data and generated application state
+users.db
+*.db-journal
+logs/*
+!logs/.gitkeep
+uploaded/*
+!uploaded/.gitkeep
+!uploaded/VersionHistory/
+uploaded/VersionHistory/*
+!uploaded/VersionHistory/.gitkeep
+downloaded/*
+!downloaded/.gitkeep
+
+# Local files and demos
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+
+# Editor configuration
+.vscode/
+.idea/
