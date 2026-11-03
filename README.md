@@ -17,7 +17,6 @@ Built as a collaborative academic software project. This is a **clean, source-on
 - **Local account demonstration:** a second Tkinter interface uses SQLite for simple local login and an admin view, with a demo database generated on demand.
 - **Logging:** local client and server activity logs.
 
-These are capabilities visible in the code, **not a guarantee that every edge case has been tested**.
 
 ## Tech stack
 
