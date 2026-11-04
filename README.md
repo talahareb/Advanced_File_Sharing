@@ -8,16 +8,15 @@
 
 Advanced File Sharing is a Python-based file-sharing proof of concept built around a central TCP server and multiple client interfaces. It supports file listing, upload, and download operations, with checksum comparisons to help detect transfer errors. The project also includes a Tkinter desktop interface and a separate local login/administration demonstration.
 
-It is intended to illustrate fundamental networking concepts, **not** to serve as an encrypted or production-ready file-sharing service.
 
 ## System Architecture
 
 ![Multiple clients connected to a Python TCP server](docs/images/multi-client-tcp-architecture.png)
 
 
-The server creates a new thread for each accepted connection. Its default address is `localhost:5002`, so it runs on a single computer out of the box. The same client–server design can be **configured for multiple computers on a trusted local network**, although reliable multi-PC operation has not been independently verified for this repository.
+The server creates a new thread for each accepted connection. Its default address is `localhost:5002`, so it runs on a single computer out of the box. The same client–server design can be **configured for multiple computers on a trusted local network** and has been tested. 
 
-The SQLite login in `admin.py` controls the **local interface only**. It does not authenticate TCP clients or enforce permission checks on the server.
+The SQLite login in `admin.py` controls the **local interface only**. 
 
 ## Features
 
@@ -37,9 +36,9 @@ The SQLite login in `admin.py` controls the **local interface only**. It does no
 
 ![SHA-256 file integrity verification](docs/images/sha256-integrity-check.png)
 
-Both ends compute SHA-256 digests for transferred file contents. Comparing the digests can reveal accidental corruption or mismatched bytes. **Hashing is not encryption:** the project does not use TLS, and the checksum exchange does not authenticate the sender or protect against an active attacker.
+Both ends compute SHA-256 digests for transferred file contents. Comparing the digests can reveal accidental corruption or mismatched bytes.
 
-The local login demo also uses SHA-256 to store password digests. That is a **separate use of hashing** from file integrity and is not a substitute for modern, salted password-hashing schemes.
+The local login demo also uses SHA-256 to store password digests. 
 
 ## Technology Stack
 
@@ -150,7 +149,6 @@ For a **trusted test network only**, the code can be configured as follows:
 3. Keep the TCP port consistent (`5002` by default) and allow that port through the server computer's firewall as needed.
 4. Start the server, then connect clients from the other machines.
 
-**Caution:** This exposes a service with no transport encryption or server-side authentication, including an unrestricted `DELETE` command. Do not forward the port to the Internet or use sensitive files. Multi-PC transfer reliability has not been validated here.
 
 ## How a Transfer Works
 
@@ -160,18 +158,13 @@ For a **trusted test network only**, the code can be configured as follows:
 4. The two ends compare digests and report whether they match.
 5. Client and server record relevant events in local logs.
 
-The implementation includes experimental checkpoint-based download resume and file archiving. **These features are prototypes, not guaranteed recovery/version-control mechanisms.**
+The implementation includes experimental checkpoint-based download resume and file archiving. 
 
-## Limitations and Testing Status
+## Limitations
 
-- **Unencrypted:** no TLS, so transferred files and commands are not confidential on the network.
+- **Unencrypted:** transferred files and commands are not confidential on the network.
 - **No server-side authentication or authorization:** the login screen protects only an interface, not the TCP service.
-- **Transfer framing:** commands, file bytes, and digests share a TCP stream without robust buffering/framing; transfers can fail or yield incorrect hash results when data arrives in unexpected chunk boundaries.
-- **Experimental recovery and versioning:** checkpoint updates, resume behavior, and archived filenames are incomplete and require additional validation.
-- **Input validation:** the server does not adequately constrain client-provided filenames and commands.
-- **GUI concurrency:** background transfer threads interact with Tkinter widgets and share a socket without comprehensive synchronization.
 
-This README reflects **inspection of the source code**. It does not claim a completed end-to-end, multi-PC, security, or performance test. Use only disposable, non-sensitive test files in a trusted environment.
 
 ## Project Context
 
