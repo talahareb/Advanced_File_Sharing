@@ -12,7 +12,8 @@ It is intended to illustrate fundamental networking concepts, **not** to serve a
 
 ## System Architecture
 
-![Diagram showing multiple Python clients connecting to a multithreaded TCP server, with server-side file storage and logs](docs/images/multi-client-architecture.svg)
+![Multiple clients connected to a Python TCP server](docs/images/multi-client-tcp-architecture.png)
+
 
 The server creates a new thread for each accepted connection. Its default address is `localhost:5002`, so it runs on a single computer out of the box. The same client–server design can be **configured for multiple computers on a trusted local network**, although reliable multi-PC operation has not been independently verified for this repository.
 
@@ -34,7 +35,7 @@ The SQLite login in `admin.py` controls the **local interface only**. It does no
 
 ## SHA-256 File Integrity
 
-![Illustration showing sender and receiver computing SHA-256 digests and comparing them after an unencrypted TCP file transfer](docs/images/sha256-integrity-check.svg)
+![SHA-256 file integrity verification](docs/images/sha256-integrity-check.png)
 
 Both ends compute SHA-256 digests for transferred file contents. Comparing the digests can reveal accidental corruption or mismatched bytes. **Hashing is not encryption:** the project does not use TLS, and the checksum exchange does not authenticate the sender or protect against an active attacker.
 
