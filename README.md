@@ -1,77 +1,118 @@
-# Advanced File Sharing — Python TCP Prototype
+# Advanced File Sharing — Python TCP Client–Server Prototype
 
-A **Python client–server file-sharing proof of concept** exploring socket programming, concurrent connections, binary file transfers, integrity verification, and desktop interfaces.
+**A collaborative academic software project exploring client–server networking, multithreaded connections, file transfer, SHA-256 checksums, and desktop interfaces in Python.**
 
-Built as a collaborative academic software project. This is a **clean, source-only copy** prepared for presentation on GitHub. It does not include the original repository's virtual environment, sample user database, logs, uploaded/downloaded test files, or duplicate archive.
+**Areas:** Computer Networks · Python · Socket Programming · Concurrency · Desktop Applications
 
-## What the project does
+## Overview
 
-- **Client–server networking:** a Python TCP server accepts commands from clients over local sockets.
-- **Concurrent connections:** server-side threads handle connected clients independently.
-- **File operations:** list, upload, download, and (via the admin demonstration interface) delete files.
-- **Integrity verification:** SHA-256 digests are calculated and compared after file transfers.
-- **Transfer progress:** a text-based progress bar, speed, and estimated remaining time in the command-line downloader; progress feedback in the Tkinter GUI.
-- **Download recovery prototype:** the command-line client implements JSON checkpoints and an experimental resume request.
-- **Basic version history:** the server attempts to archive a previous file when the same name is uploaded again.
-- **Two client interfaces:** a command-line client and a Tkinter desktop client.
-- **Local account demonstration:** a second Tkinter interface uses SQLite for simple local login and an admin view, with a demo database generated on demand.
-- **Logging:** local client and server activity logs.
+Advanced File Sharing is a Python-based file-sharing proof of concept built around a central TCP server and multiple client interfaces. It supports file listing, upload, and download operations, with checksum comparisons to help detect transfer errors. The project also includes a Tkinter desktop interface and a separate local login/administration demonstration.
 
+It is intended to illustrate fundamental networking concepts, **not** to serve as an encrypted or production-ready file-sharing service.
 
-## Tech stack
+## System Architecture
+
+![Diagram showing multiple Python clients connecting to a multithreaded TCP server, with server-side file storage and logs](docs/images/multi-client-architecture.svg)
+
+The server creates a new thread for each accepted connection. Its default address is `localhost:5002`, so it runs on a single computer out of the box. The same client–server design can be **configured for multiple computers on a trusted local network**, although reliable multi-PC operation has not been independently verified for this repository.
+
+The SQLite login in `admin.py` controls the **local interface only**. It does not authenticate TCP clients or enforce permission checks on the server.
+
+## Features
+
+| Component | Implementation |
+| --- | --- |
+| **Client–server communication** | TCP sockets with text commands and chunked file data. |
+| **Concurrent client handling** | A separate server-side thread for each accepted connection. |
+| **File management** | File listing, upload, download, and a server-side delete command exposed by the admin demo. |
+| **Integrity checking** | SHA-256 digest comparisons for uploads and downloads. |
+| **Command-line client** | Interactive commands; download progress, speed, elapsed time, and estimated time remaining. |
+| **Desktop interface** | Tkinter file browser with upload/download controls and progress feedback. |
+| **Local account demo** | SQLite-backed login and role-dependent Tkinter controls. |
+| **Logging** | Timestamped activity logs and JSON checkpoint data. |
+| **Experimental functions** | Partial-download checkpoints/resume and archived file versions. |
+
+## SHA-256 File Integrity
+
+![Illustration showing sender and receiver computing SHA-256 digests and comparing them after an unencrypted TCP file transfer](docs/images/sha256-integrity-check.svg)
+
+Both ends compute SHA-256 digests for transferred file contents. Comparing the digests can reveal accidental corruption or mismatched bytes. **Hashing is not encryption:** the project does not use TLS, and the checksum exchange does not authenticate the sender or protect against an active attacker.
+
+The local login demo also uses SHA-256 to store password digests. That is a **separate use of hashing** from file integrity and is not a substitute for modern, salted password-hashing schemes.
+
+## Technology Stack
 
 | Area | Technologies |
 | --- | --- |
-| Application | Python 3 |
-| Networking | `socket` (TCP) |
+| Language | Python 3.8+ |
+| Network communication | `socket` (TCP) |
 | Concurrency | `threading` |
-| Desktop GUI | Tkinter |
+| Graphical user interface | Tkinter |
 | File integrity | `hashlib` / SHA-256 |
-| Local account demo | SQLite (`sqlite3`) |
-| Progress and checkpoints | JSON, local files |
+| Local user data | SQLite (`sqlite3`) |
+| Logs and checkpoints | Text files and JSON |
 
-The code uses Python's standard library. Tkinter must be available in your Python installation to run the desktop clients. Python **3.8+** is recommended (the scripts use assignment expressions).
+The core project uses the Python standard library. There are no third-party Python package dependencies; Tkinter must be available separately if it is not included in your Python installation.
 
-## Repository structure
+## Project Structure
 
 ```text
-Advanced-File-Sharing/
-├── README.md
+Advanced_File_Sharing/
+├── server.py               # TCP server and per-connection handlers
+├── client.py               # Interactive command-line client
+├── client_gui.py           # Tkinter file-transfer client
+├── admin.py                # Local SQLite login and admin UI demo
+├── setupdb.py              # Creates sample local user records
+├── docs/
+│   └── images/
+│       ├── multi-client-architecture.svg
+│       └── sha256-integrity-check.svg
 ├── .gitignore
-├── server.py            # Multithreaded TCP server
-├── client.py            # Command-line client and resumable download prototype
-├── client_gui.py        # Tkinter file-sharing client
-├── admin.py             # Tkinter local login / admin demo
-├── setupdb.py           # Creates a local demo SQLite database
-├── uploaded/            # Server-side files (created during usage)
-│   └── VersionHistory/ # Previous versions of uploaded files
-├── downloaded/          # Downloaded files
-└── logs/                # Runtime logs and checkpoints
+└── README.md
+
+# Generated during local use (excluded from Git):
+# uploaded/                Server-side files and VersionHistory/
+# downloaded/              Client download directory
+# logs/                    Activity logs and checkpoint files
+# users.db                 Local SQLite login demonstration database
 ```
 
-## Run locally
+## Getting Started
 
-**Prerequisites:** Python 3.8+ and Tkinter for GUI mode. No `pip install` step is required for the core scripts.
+**Requirements:** Python 3.8+; Tkinter only for the graphical interfaces. Run commands from the repository root because the application uses relative paths.
 
-Run commands **from the project root**, since file storage and log paths are relative to the current working directory.
+### 1. Clone
 
-### 1. Start the TCP server
+```bash
+git clone https://github.com/talahareb/Advanced_File_Sharing.git
+cd Advanced_File_Sharing
+```
+
+### 2. Prepare local directories
+
+The server creates `logs/` and `uploaded/`, but the command-line client needs `downloaded/` to exist before it saves a file. Create the folders first:
+
+```bash
+python -c "from pathlib import Path; [Path(p).mkdir(exist_ok=True) for p in ('logs', 'uploaded', 'downloaded')]"
+```
+
+### 3. Start the server
 
 ```bash
 python server.py
 ```
 
-By default, it listens at `localhost:5002` and creates the `uploaded/` and `logs/` directories if needed.
+The server binds to `localhost:5002` by default. Leave this terminal running.
 
-### 2. Choose a client
+### 4. Run a client
 
-**Command-line:** in a second terminal,
+**Command line** — open another terminal in the project root:
 
 ```bash
 python client.py
 ```
 
-The client accepts commands such as:
+Example commands:
 
 ```text
 LIST
@@ -80,39 +121,57 @@ DOWNLOAD example.txt
 EXIT
 ```
 
-Use a local filename or path for `UPLOAD` (create a small `example.txt` first). Downloads are written to `downloaded/`.
+Create a non-sensitive test file named `example.txt` before uploading it. The download command writes to `downloaded/`.
 
-**Graphical interface:** alternatively, run:
+**Graphical interface** — alternatively, launch:
 
 ```bash
 python client_gui.py
 ```
 
-Click **Connect to server**, then use the buttons to view, upload, or download files.
+Click **Connect to server**, then choose files to upload or download.
 
-### 3. Optional local login/admin demonstration
+### 5. Optional: local login and admin demonstration
 
 ```bash
 python setupdb.py
 python admin.py
 ```
 
-`setupdb.py` creates sample accounts for local demonstration purposes; consult that file for the demo credentials. `admin.py` illustrates role-dependent **interface controls** and includes an optional Windows Notepad log viewer.
+`setupdb.py` creates demonstration accounts (inspect the script for credentials). The admin UI offers delete and log-viewing controls; the log viewer invokes Windows Notepad. **These controls are not enforced by server-side authentication.**
 
-## How file transfers work
+### Optional: connections from other computers on a LAN
 
-1. A client connects to the TCP server.
-2. It sends a text command such as `LIST`, `UPLOAD <filename> <size>`, or `DOWNLOAD <filename>`.
-3. For transfers, the sender streams the file as binary data.
-4. The receiver computes a SHA-256 digest, which is compared with the other side's digest.
-5. Transfer activity can be displayed through a client interface and recorded in logs.
+For a **trusted test network only**, the code can be configured as follows:
 
-The command-line downloader additionally saves local checkpoints and can request that a file continue from a recorded byte offset; the behavior remains experimental.
+1. Change `HOST` in `server.py` from `localhost` to `0.0.0.0` so the server listens on network interfaces.
+2. Set `HOST` in the client script you use (`client.py`, `client_gui.py`, or `admin.py`) to the server computer's **LAN IP address**.
+3. Keep the TCP port consistent (`5002` by default) and allow that port through the server computer's firewall as needed.
+4. Start the server, then connect clients from the other machines.
 
-## Scope and limitations
+**Caution:** This exposes a service with no transport encryption or server-side authentication, including an unrestricted `DELETE` command. Do not forward the port to the Internet or use sensitive files. Multi-PC transfer reliability has not been validated here.
 
-This is a **local learning prototype**, not a secure production file-sharing platform. The TCP server does not enforce authentication or admin permissions on file commands; the SQLite login applies to a local desktop interface only. Connections are not encrypted, and filename handling, transfer framing, file-version recovery, concurrent file modifications, and interrupted transfers have not been fully hardened or validated. Run it only with **non-sensitive test files** in a trusted local environment.
+## How a Transfer Works
 
-The purpose is to demonstrate computer networking fundamentals, client–server architecture, threading, file I/O, integrity checking, and desktop application development.
+1. The client opens a TCP connection and sends a command such as `LIST`, `UPLOAD`, or `DOWNLOAD`.
+2. The sender sends file bytes in chunks, with file length communicated as part of the protocol.
+3. The receiving side saves the bytes and computes a SHA-256 digest.
+4. The two ends compare digests and report whether they match.
+5. Client and server record relevant events in local logs.
 
+The implementation includes experimental checkpoint-based download resume and file archiving. **These features are prototypes, not guaranteed recovery/version-control mechanisms.**
 
+## Limitations and Testing Status
+
+- **Unencrypted:** no TLS, so transferred files and commands are not confidential on the network.
+- **No server-side authentication or authorization:** the login screen protects only an interface, not the TCP service.
+- **Transfer framing:** commands, file bytes, and digests share a TCP stream without robust buffering/framing; transfers can fail or yield incorrect hash results when data arrives in unexpected chunk boundaries.
+- **Experimental recovery and versioning:** checkpoint updates, resume behavior, and archived filenames are incomplete and require additional validation.
+- **Input validation:** the server does not adequately constrain client-provided filenames and commands.
+- **GUI concurrency:** background transfer threads interact with Tkinter widgets and share a socket without comprehensive synchronization.
+
+This README reflects **inspection of the source code**. It does not claim a completed end-to-end, multi-PC, security, or performance test. Use only disposable, non-sensitive test files in a trusted environment.
+
+## Project Context
+
+Developed as a **collaborative academic project** focused on practical networking and software engineering concepts. The project demonstrates TCP sockets, concurrent client handling, local file operations, checksum comparison, desktop UI development, and the engineering trade-offs of an educational file-transfer protocol.
