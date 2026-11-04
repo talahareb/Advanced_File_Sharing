@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="570" viewBox="0 0 1100 570" role="img" aria-label="Three local clients connect over TCP to a multi-threaded Python server; SQLite login is local to the admin app, not enforced by server">
+<defs>
+ <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth"><path d="M1 1L8 5L1 9" fill="none" stroke="#55718A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker>
+ <style>
+  text{font-family:Inter,Segoe UI,Arial,sans-serif;fill:#233B50}.title{font-size:28px;font-weight:700}.sub{font-size:16px;fill:#537084}.h{font-size:22px;font-weight:700}.body{font-size:16px}.sm{font-size:15px;fill:#486276}.foot{font-size:15px;fill:#637587}.line{fill:none;stroke:#55718A;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+ </style>
+</defs>
+<rect x="1.5" y="1.5" width="1097" height="567" rx="22" fill="#FCFDFE" stroke="#D8E2EB" stroke-width="2"/>
+<text class="title" x="40" y="49">Multiple clients, one TCP server</text>
+<text class="sub" x="40" y="78">Architecture shown for a trusted local network — multi-PC use requires changing the default localhost settings</text>
+<!-- clients -->
+<rect x="40" y="110" width="260" height="104" rx="16" fill="#E5F1FC" stroke="#79A8D3" stroke-width="2"/>
+<text class="h" x="62" y="148">Command-line client</text><text class="body" x="62" y="177">client.py</text><text class="sm" x="62" y="199">PC A / Terminal</text>
+<rect x="40" y="241" width="260" height="104" rx="16" fill="#E5F1FC" stroke="#79A8D3" stroke-width="2"/>
+<text class="h" x="62" y="279">Graphical client</text><text class="body" x="62" y="308">client_gui.py</text><text class="sm" x="62" y="330">PC B / Tkinter</text>
+<rect x="40" y="372" width="260" height="124" rx="16" fill="#EEE9FB" stroke="#A996D4" stroke-width="2"/>
+<text class="h" x="62" y="407">Admin demo</text><text class="body" x="62" y="436">admin.py · Tkinter</text><text class="sm" x="62" y="462">Local SQLite login only</text><text class="sm" x="62" y="480">No server-side enforcement</text>
+<!-- connection paths -->
+<path class="line" d="M300 163 H520 V252 H665"/>
+<path class="line" d="M300 293 H665"/>
+<path class="line" d="M300 434 H540 V335 H665"/>
+<rect x="366" y="100" width="204" height="36" rx="18" fill="#FFF3DF" stroke="#E9BC6F"/>
+<text x="468" y="124" fill="#86601D" font-size="15" font-family="Inter,Segoe UI,Arial,sans-serif" text-anchor="middle">TCP · no encryption</text>
+<!-- server -->
+<rect x="666" y="201" width="390" height="159" rx="19" fill="#E2F4EB" stroke="#6FAE91" stroke-width="2.5"/>
+<text class="h" x="690" y="239">Python TCP server</text>
+<text class="body" x="690" y="271">server.py · port 5002</text>
+<text class="body" x="690" y="299">New thread per connection</text>
+<text class="sm" x="690" y="328">LIST / UPLOAD / DOWNLOAD / DELETE</text>
+<!-- storage -->
+<path d="M840 360 V388" stroke="#638D79" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+<rect x="667" y="399" width="184" height="72" rx="13" fill="#F1F5F8" stroke="#B9C9D5" stroke-width="2"/>
+<rect x="871" y="399" width="184" height="72" rx="13" fill="#F1F5F8" stroke="#B9C9D5" stroke-width="2"/>
+<text x="759" y="430" font-size="18" font-weight="700" text-anchor="middle">uploaded/</text>
+<text x="759" y="452" class="sm" text-anchor="middle">Stored files</text>
+<text x="963" y="430" font-size="18" font-weight="700" text-anchor="middle">logs/</text>
+<text x="963" y="452" class="sm" text-anchor="middle">Events/checkpoints</text>
+<text class="foot" x="40" y="544">Default is same-PC loopback (localhost); multiple-PC operation is a configurable capability, not a verified benchmark.</text>
+</svg>
